@@ -1,0 +1,332 @@
+version: 2
+
+models:
+  - name: dim_zones
+    description: ""
+    columns:
+      - name: locationid
+        data_type: numeric
+        description: ""
+
+      - name: borough
+        data_type: string
+        description: ""
+
+      - name: zone
+        data_type: string
+        description: ""
+
+      - name: service_zone
+        data_type: string
+        description: ""
+
+  - name: dim_taxi_trips
+    description: ""
+    columns:
+      - name: tripid
+        data_type: string
+        description: ""
+
+      - name: vendorid
+        data_type: int64
+        description: ""
+
+      - name: service_type
+        data_type: string
+        description: ""
+
+      - name: ratecodeid
+        data_type: int64
+        description: ""
+
+      - name: pickup_locationid
+        data_type: int64
+        description: ""
+
+      - name: pickup_borough
+        data_type: string
+        description: ""
+
+      - name: pickup_zone
+        data_type: string
+        description: ""
+
+      - name: dropoff_locationid
+        data_type: int64
+        description: ""
+
+      - name: dropoff_borough
+        data_type: string
+        description: ""
+
+      - name: dropoff_zone
+        data_type: string
+        description: ""
+
+      - name: pickup_datetime
+        data_type: timestamp
+        description: ""
+
+      - name: dropoff_datetime
+        data_type: timestamp
+        description: ""
+
+      - name: store_and_fwd_flag
+        data_type: boolean
+        description: ""
+
+      - name: passenger_count
+        data_type: int64
+        description: ""
+
+      - name: trip_distance
+        data_type: numeric
+        description: ""
+
+      - name: trip_type
+        data_type: int64
+        description: ""
+
+      - name: fare_amount
+        data_type: numeric
+        description: ""
+
+      - name: extra
+        data_type: numeric
+        description: ""
+
+      - name: mta_tax
+        data_type: numeric
+        description: ""
+
+      - name: tip_amount
+        data_type: numeric
+        description: ""
+
+      - name: tolls_amount
+        data_type: numeric
+        description: ""
+
+      - name: ehail_fee
+        data_type: numeric
+        description: ""
+
+      - name: improvement_surcharge
+        data_type: numeric
+        description: ""
+
+      - name: total_amount
+        data_type: numeric
+        description: ""
+
+      - name: payment_type
+        data_type: int64
+        description: ""
+
+      - name: payment_type_description
+        data_type: string
+        description: ""
+
+      - name: trip_year
+        data_type: int64
+        description: ""
+
+      - name: trip_quarter
+        data_type: int64
+        description: ""
+
+      - name: trip_month
+        data_type: int64
+        description: ""
+
+      - name: trip_year_quarter
+        data_type: string
+        description: ""
+
+  - name: fct_taxi_trips_monthly_fare
+    description: ""
+    columns:
+      - name: service_type
+        data_type: string
+        description: ""
+
+      - name: trip_year
+        data_type: int64
+        description: ""
+
+      - name: trip_month
+        data_type: int64
+        description: ""
+
+      - name: p90_fare
+        data_type: float64
+        description: ""
+
+      - name: p95_fare
+        data_type: float64
+        description: ""
+
+      - name: p97_fare
+        data_type: float64
+        description: ""
+
+  - name: fct_taxi_trips_quarterly_revenue
+    description: ""
+    columns:
+      - name: service_type
+        data_type: string
+        description: ""
+
+      - name: trip_year
+        data_type: int64
+        description: ""
+
+      - name: trip_quarter
+        data_type: int64
+        description: ""
+
+      - name: quarterly_revenue
+        data_type: numeric
+        description: ""
+
+      - name: previous_quarter_revenue
+        data_type: record
+        description: ""
+
+      - name: previous_quarter_revenue.service_type
+        data_type: string
+        description: ""
+
+      - name: previous_quarter_revenue.trip_year
+        data_type: int64
+        description: ""
+
+      - name: previous_quarter_revenue.trip_quarter
+        data_type: int64
+        description: ""
+
+      - name: previous_quarter_revenue.quarterly_revenue
+        data_type: numeric
+        description: ""
+
+      - name: previous_year_quarter_revenue
+        data_type: record
+        description: ""
+
+      - name: previous_year_quarter_revenue.service_type
+        data_type: string
+        description: ""
+
+      - name: previous_year_quarter_revenue.trip_year
+        data_type: int64
+        description: ""
+
+      - name: previous_year_quarter_revenue.trip_quarter
+        data_type: int64
+        description: ""
+
+      - name: previous_year_quarter_revenue.quarterly_revenue
+        data_type: numeric
+        description: ""
+
+  - name: dim_fhv_trips
+    description: ""
+    columns:
+      - name: tripid
+        data_type: string
+        description: ""
+
+      - name: dispatching_base_num
+        data_type: string
+        description: ""
+
+      - name: pickup_datetime
+        data_type: timestamp
+        description: ""
+
+      - name: dropoff_datetime
+        data_type: timestamp
+        description: ""
+
+      - name: pickup_locationid
+        data_type: int64
+        description: ""
+
+      - name: dropoff_locationid
+        data_type: int64
+        description: ""
+
+      - name: sr_flag
+        data_type: int64
+        description: ""
+
+      - name: affiliated_base_number
+        data_type: string
+        description: ""
+
+      - name: pickup_borough
+        data_type: string
+        description: ""
+
+      - name: pickup_zone
+        data_type: string
+        description: ""
+
+      - name: dropoff_borough
+        data_type: string
+        description: ""
+
+      - name: dropoff_zone
+        data_type: string
+        description: ""
+
+      - name: trip_year
+        data_type: int64
+        description: ""
+
+      - name: trip_quarter
+        data_type: int64
+        description: ""
+
+      - name: trip_month
+        data_type: int64
+        description: ""
+
+  - name: fct_fhv_monthly_zone_traveltime_p90
+    description: ""
+    columns:
+      - name: trip_year
+        data_type: int64
+        description: ""
+
+      - name: trip_month
+        data_type: int64
+        description: ""
+
+      - name: pickup_locationid
+        data_type: int64
+        description: ""
+
+      - name: pickup_borough
+        data_type: string
+        description: ""
+
+      - name: pickup_zone
+        data_type: string
+        description: ""
+
+      - name: dropoff_locationid
+        data_type: int64
+        description: ""
+
+      - name: dropoff_borough
+        data_type: string
+        description: ""
+
+      - name: dropoff_zone
+        data_type: string
+        description: ""
+
+      - name: p90_trip_duration
+        data_type: int64
+        description: ""
