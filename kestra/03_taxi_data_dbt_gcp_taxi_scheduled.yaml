@@ -1,4 +1,4 @@
-id: taxi_data_dbt_gcp_taxi_scheduled_update
+id: taxi_data_dbt_gcp_taxi_scheduled
 namespace: taxi_gcp
 description: |
   This flow downloads NYC taxi data (2019-2020) from GitHub,
