@@ -1,7 +1,7 @@
 id: taxi_data_dbt_gcp_taxi_scheduled_update
 namespace: taxi_gcp
 description: |
-  This flow downloads NYC taxi data (2019-2021) from GitHub,
+  This flow downloads NYC taxi data (2019-2020) from GitHub,
   extracts and uploads it to Google Cloud Storage (GCS),
   and creates an external table in BigQuery.
 
