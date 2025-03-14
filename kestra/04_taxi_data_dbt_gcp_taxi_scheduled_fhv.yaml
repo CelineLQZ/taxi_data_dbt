@@ -1,0 +1,71 @@
+id: taxi_data_dbt_gcp_taxi_scheduled_fhv
+namespace: taxi_gcp
+description: |
+  This flow downloads NYC FHV taxi data (2020) from GitHub,
+  extracts and uploads it to Google Cloud Storage (GCS),
+  and creates an external table in BigQuery.
+
+variables:
+  taxi: "fhv"
+  file: "{{vars.taxi}}_tripdata_{{trigger.date | date('yyyy-MM')}}.csv"
+  gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.file}}"
+  table: "{{kv('GCP_DATASET')}}.{{vars.taxi}}_tripdata_ext"
+  data: "{{outputs.extract.outputFiles[vars.taxi ~ '_tripdata_' ~ (trigger.date | date('yyyy-MM')) ~ '.csv']}}"
+
+tasks:
+  - id: set_label
+    type: io.kestra.plugin.core.execution.Labels
+    labels:
+      file: "{{render(vars.file)}}"
+      taxi: "{{vars.taxi}}"
+
+  - id: extract
+    type: io.kestra.plugin.scripts.shell.Commands
+    outputFiles:
+      - "*.csv"
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - wget -qO- https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{{vars.taxi}}/{{render(vars.file)}}.gz | gunzip > {{render(vars.file)}}
+
+  - id: upload_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.data)}}"
+    to: "{{render(vars.gcs_file)}}"
+
+  - id: create_external_table
+    type: io.kestra.plugin.gcp.bigquery.Query
+    sql: |
+      DECLARE table_exists BOOL;
+      SET table_exists = (
+        SELECT COUNT(*)
+        FROM `{{kv('GCP_PROJECT_ID')}}.{{kv('GCP_DATASET')}}.__TABLES__`
+        WHERE table_id = '{{vars.taxi}}_tripdata_ext'
+      ) > 0;
+
+      IF table_exists = FALSE THEN
+        CREATE EXTERNAL TABLE `{{kv('GCP_PROJECT_ID')}}.{{kv('GCP_DATASET')}}.{{vars.taxi}}_tripdata_ext`
+        OPTIONS (
+          format = 'CSV',
+          uris = ['gs://{{kv('GCP_BUCKET_NAME')}}/fhv_tripdata_*.csv'],
+          skip_leading_rows = 1,
+          ignore_unknown_values = TRUE
+        );
+      END IF;
+
+  - id: purge_files
+    type: io.kestra.plugin.core.storage.PurgeCurrentExecutionFiles
+    description: Remove downloaded files to avoid clutter.
+
+pluginDefaults:
+  - type: io.kestra.plugin.gcp
+    values:
+      serviceAccount: "{{kv('GCP_CREDS')}}"
+      projectId: "{{kv('GCP_PROJECT_ID')}}"
+      location: "{{kv('GCP_LOCATION')}}"
+      bucket: "{{kv('GCP_BUCKET_NAME')}}"
+
+triggers:
+  - id: fhv_schedule
+    type: io.kestra.plugin.core.trigger.Schedule
+    cron: "0 9 1 * *"  
